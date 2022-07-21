@@ -1,0 +1,68 @@
+pipeline{
+	agent {
+		kubernetes {
+            defaultContainer 'jnlp'
+            yamlFile 'build.yaml'
+        }
+	}
+	stages{
+		stage('Test') {
+		      steps {
+			script {
+				nodejs(nodeJSInstallationName:'nodejs'){
+					sh "cd nodejs"
+					sh "npm install --save-dev @babel/preset-react"
+					sh "npm run test"
+					sh "pwd"
+					sh "ls"
+				}
+			}
+		      }
+		      post {
+			always {
+			  step([$class: 'CoberturaPublisher', coberturaReportFile: './cobertura-coverage.xml'])
+			}
+		      }
+		    }
+		stage("SonarQube"){
+			steps{
+				nodejs(nodeJSInstallationName:'nodejs'){	
+				sh "cd nodejs"
+				sh "npm run build"
+					script {
+					
+					sh "${tool("sonarqube-container")}/bin/sonar-scanner \
+					  -Dsonar.projectKey=test \
+					  -Dsonar.sources=. \
+					  -Dsonar.host.url=http://129.151.139.181:9000 \
+					  -Dsonar.login=f63392c1ba820340860f44314880c1197389b2b4"
+						}
+					
+				}
+			}
+		}
+ 
+		stage("Image Build and Push "){
+			steps {
+				container('podman') {
+					sh  "podman build ./nodejs -t elamin88/node-test"			
+					withCredentials([usernamePassword(credentialsId: "dockerhub-amin",
+													usernameVariable: 'USERNAME',
+													passwordVariable: 'PASSWORD')]) {
+						sh "podman login -u ${USERNAME} -p ${PASSWORD} docker.io --tls-verify=false"
+						sh "podman push elamin88/node-test --tls-verify=false"
+					}
+				}
+			}
+		}
+
+
+		stage("Helm"){
+			steps {
+				container('helm') {
+						sh "helm -n abdo upgrade --install nodejs ./chart"
+				}
+			}
+		}
+	}
+}
