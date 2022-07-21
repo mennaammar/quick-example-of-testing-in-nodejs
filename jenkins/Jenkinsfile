@@ -37,7 +37,15 @@ pipeline{
 					
 				}
 			}
+			
 		}
+		stage("Quality gate") {
+			    steps {
+				waitForQualityGate abortPipeline: true
+			    }
+			}
+	
+        
  
 // 		stage("Image Build and Push "){
 // 			steps {
