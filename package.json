@@ -26,7 +26,7 @@
   "name": "continuous-test-code-coverage-guide",
   "scripts": {
     "start": "webpack",
-    "test": "jest --passWithNoTests --coverage"
+    "test": "jest --passWithNoTests --coverage --coverageDirectory=."
   },
    "jest": {
     "coverageReporters": [
