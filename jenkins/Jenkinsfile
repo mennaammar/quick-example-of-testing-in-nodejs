@@ -10,7 +10,7 @@ pipeline{
 		      steps {
 			script {
 				nodejs(nodeJSInstallationName:'nodejs'){
-					sh "cd nodejs"
+				
 					sh "npm install --save-dev @babel/preset-react"
 					sh "npm run test"
 					sh "pwd"
@@ -27,7 +27,7 @@ pipeline{
 		stage("SonarQube"){
 			steps{
 				nodejs(nodeJSInstallationName:'nodejs'){	
-				sh "cd nodejs"
+		
 				sh "npm run build"
 					script {
 					
@@ -42,27 +42,27 @@ pipeline{
 			}
 		}
  
-		stage("Image Build and Push "){
-			steps {
-				container('podman') {
-					sh  "podman build ./nodejs -t elamin88/node-test"			
-					withCredentials([usernamePassword(credentialsId: "dockerhub-amin",
-													usernameVariable: 'USERNAME',
-													passwordVariable: 'PASSWORD')]) {
-						sh "podman login -u ${USERNAME} -p ${PASSWORD} docker.io --tls-verify=false"
-						sh "podman push elamin88/node-test --tls-verify=false"
-					}
-				}
-			}
-		}
+// 		stage("Image Build and Push "){
+// 			steps {
+// 				container('podman') {
+// 					sh  "podman build ./nodejs -t elamin88/node-test"			
+// 					withCredentials([usernamePassword(credentialsId: "dockerhub-amin",
+// 													usernameVariable: 'USERNAME',
+// 													passwordVariable: 'PASSWORD')]) {
+// 						sh "podman login -u ${USERNAME} -p ${PASSWORD} docker.io --tls-verify=false"
+// 						sh "podman push elamin88/node-test --tls-verify=false"
+// 					}
+// 				}
+// 			}
+// 		}
 
 
-		stage("Helm"){
-			steps {
-				container('helm') {
-						sh "helm -n abdo upgrade --install nodejs ./chart"
-				}
-			}
-		}
+// 		stage("Helm"){
+// 			steps {
+// 				container('helm') {
+// 						sh "helm -n abdo upgrade --install nodejs ./chart"
+// 				}
+// 			}
+// 		}
 	}
 }
