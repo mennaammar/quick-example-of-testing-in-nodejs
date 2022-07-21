@@ -11,7 +11,7 @@ pipeline{
 			script {
 				nodejs(nodeJSInstallationName:'nodejs'){
 				
-					sh "npm install --save-dev @babel/preset-react"
+					sh "npm install"
 					sh "npm run test"
 					sh "pwd"
 					sh "ls"
