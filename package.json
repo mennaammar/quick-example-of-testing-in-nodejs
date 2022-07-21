@@ -22,5 +22,16 @@
     "colors": "^1.1.2",
     "command-line-args": "^4.0.7",
     "request": "^2.83.0"
-  }
+  },
+  "name": "continuous-test-code-coverage-guide",
+  "scripts": {
+    "start": "webpack",
+    "test": "jest --coverage"
+  },
+   "jest": {
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ]
+   }
 }
