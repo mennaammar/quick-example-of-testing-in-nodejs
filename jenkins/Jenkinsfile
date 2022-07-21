@@ -6,26 +6,26 @@ pipeline{
         }
 	}
 	stages{
-		stage('Test') {
-		      steps {
-			script {
-				nodejs(nodeJSInstallationName:'nodejs'){
+// 		stage('Test') {
+// 		      steps {
+// 			script {
+// 				nodejs(nodeJSInstallationName:'nodejs'){
 				
-					sh "npm install -g jest && npm install --include=dev jest-junit && npm install && npm audit fix --force && npm run --passWithNoTests test test/"
-				}
-			}
-		      }
-		      post {
-			always {
-			  step([$class: 'CoberturaPublisher', coberturaReportFile: './cobertura-coverage.xml'])
-			}
-		      }
-		    }
+// 					sh "npm install -g jest && npm install --include=dev jest-junit && npm install && npm audit fix --force && npm run --passWithNoTests test test/"
+// 				}
+// 			}
+// 		      }
+// 		      post {
+// 			always {
+// 			  step([$class: 'CoberturaPublisher', coberturaReportFile: './cobertura-coverage.xml'])
+// 			}
+// 		      }
+// 		    }
 		stage("SonarQube"){
 			steps{
 				nodejs(nodeJSInstallationName:'nodejs'){	
 		
-				sh "npm run build"
+				sh "npm install && npm run build"
 					script {
 					
 					sh "${tool("sonarqube-container")}/bin/sonar-scanner \
